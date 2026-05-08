@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quaranup Music Camp 2026 Application</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.1.96/css/materialdesignicons.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vuetify@3.6.0/dist/vuetify.min.css" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div id="app">
+      <v-app>
+        <v-main>
+          <v-container class="py-8">
+            <v-card class="mb-6 pa-6">
+              <v-row>
+                <v-col cols="12" md="8">
+                  <h1 class="title">Quaranup Music Camp 2026 Application</h1>
+                  <p class="subtitle">
+                    Use this form to apply for the Quaranup Music Camp 2026. Your submission will be
+                    added to the selected Google Sheet.
+                  </p>
+                </v-col>
+                <v-col cols="12" md="4" class="d-flex align-center justify-end">
+                  <v-chip color="green" text-color="white" class="ma-0">
+                    Camp dates: 2–10 January 2026
+                  </v-chip>
+                </v-col>
+              </v-row>
+            </v-card>
+
+            <v-form ref="applicationForm" v-model="isFormValid" lazy-validation>
+              <v-card class="mb-6 pa-6 section-card">
+                <h2>Your Contact details</h2>
+                <v-row>
+                  <v-col cols="12" md="4">
+                    <v-text-field
+                      v-model="form.email"
+                      label="Email *"
+                      :rules="[requiredRule, emailRule]"
+                      type="email"
+                      required
+                    />
+                  </v-col>
+                  <v-col cols="12" md="4">
+                    <v-text-field
+                      v-model="form.firstName"
+                      label="First name *"
+                      :rules="[requiredRule]"
+                      required
+                    />
+                  </v-col>
+                  <v-col cols="12" md="4">
+                    <v-text-field
+                      v-model="form.lastName"
+                      label="Last name *"
+                      :rules="[requiredRule]"
+                      required
+                    />
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col cols="12" md="6">
+                    <v-text-field
+                      v-model="form.phone"
+                      label="Contact phone number *"
+                      :rules="[requiredRule]"
+                      required
+                    />
+                  </v-col>
+                </v-row>
+              </v-card>
+
+              <v-card class="mb-6 pa-6 section-card">
+                <v-row class="align-center mb-4">
+                  <v-col cols="12" md="8">
+                    <h2>Camper details</h2>
+                    <p class="section-note">
+                      Add one or more camper records. The first camper is prefilled with your contact details.
+                    </p>
+                  </v-col>
+                  <v-col cols="12" md="4" class="d-flex justify-end">
+                    <v-btn color="primary" @click="addCamper" :disabled="form.children.length >= 4">
+                      Add camper
+                    </v-btn>
+                  </v-col>
+                </v-row>
+
+                <v-tabs v-model="selectedCamperTab" show-arrows>
+                  <v-tab v-for="(child, index) in form.children" :key="index">
+                    {{ index === 0 ? 'Camper 1' : `Camper ${index + 1}` }}
+                  </v-tab>
+                </v-tabs>
+
+                <v-tabs-items v-model="selectedCamperTab">
+                  <v-tab-item v-for="(child, index) in form.children" :key="index">
+                    <v-card flat class="pa-4 child-card">
+                      <v-row class="align-center mb-4">
+                        <v-col cols="12" md="6">
+                          <h3>{{ index === 0 ? 'Camper 1 details' : `Camper ${index + 1} details` }}</h3>
+                        </v-col>
+                        <v-col cols="12" md="6" class="d-flex justify-end">
+                          <v-btn text color="error" v-if="index > 0" @click="removeCamper(index)">
+                            Remove camper
+                          </v-btn>
+                        </v-col>
+                      </v-row>
+
+                      <v-row>
+                        <v-col cols="12" md="4">
+                          <v-text-field
+                            v-model="child.email"
+                            label="Camper email *"
+                            :rules="[requiredRule, emailRule]"
+                            type="email"
+                            required
+                          />
+                        </v-col>
+                        <v-col cols="12" md="4">
+                          <v-text-field
+                            v-model="child.firstName"
+                            label="Camper first name *"
+                            :rules="[requiredRule]"
+                            required
+                          />
+                        </v-col>
+                        <v-col cols="12" md="4">
+                          <v-text-field
+                            v-model="child.lastName"
+                            label="Camper last name *"
+                            :rules="[requiredRule]"
+                            required
+                          />
+                        </v-col>
+                      </v-row>
+                      <v-row>
+                        <v-col cols="12" md="6">
+                          <v-text-field
+                            v-model="child.phone"
+                            label="Camper phone number *"
+                            :rules="[requiredRule]"
+                            required
+                          />
+                        </v-col>
+                        <v-col cols="12" md="6">
+                          <v-radio-group
+                            v-model="child.under18"
+                            label="I will be under the age of 18 on 28/12/2024 *"
+                            :rules="[requiredRule]"
+                            row
+                          >
+                            <v-radio label="Yes" value="Yes" />
+                            <v-radio label="No" value="No" />
+                          </v-radio-group>
+                        </v-col>
+                      </v-row>
+
+                      <v-expand-transition>
+                        <div v-if="child.under18 === 'Yes'">
+                          <v-divider class="my-4" />
+                          <h4>Under-18 details</h4>
+                          <v-row>
+                            <v-col cols="12" md="4">
+                              <v-text-field
+                                v-model="child.dob"
+                                label="Date of birth *"
+                                :rules="[requiredRule]"
+                                type="date"
+                                required
+                              />
+                            </v-col>
+                            <v-col cols="12" md="4">
+                              <v-text-field
+                                v-model="child.parentContactName"
+                                label="Name of parent contact *"
+                                :rules="[requiredRule]"
+                                required
+                              />
+                            </v-col>
+                            <v-col cols="12" md="4">
+                              <v-text-field
+                                v-model="child.parentContactEmail"
+                                label="Email of parent contact *"
+                                :rules="[requiredRule, emailRule]"
+                                type="email"
+                                required
+                              />
+                            </v-col>
+                          </v-row>
+                          <v-row>
+                            <v-col cols="12" md="6">
+                              <v-radio-group
+                                v-model="child.parentAttending"
+                                label="My parent is attending camp *"
+                                :rules="[requiredRule]"
+                                row
+                              >
+                                <v-radio label="Yes" value="Yes" />
+                                <v-radio label="No" value="No" />
+                              </v-radio-group>
+                            </v-col>
+                          </v-row>
+                        </div>
+                      </v-expand-transition>
+
+                      <v-expand-transition>
+                        <div v-if="child.under18 === 'Yes' && child.parentAttending === 'No'">
+                          <v-divider class="my-4" />
+                          <h4>Nominated guardian</h4>
+                          <v-row>
+                            <v-col cols="12" md="6">
+                              <v-text-field
+                                v-model="child.guardianName"
+                                label="Name of nominated guardian *"
+                                :rules="[requiredRule]"
+                                required
+                              />
+                            </v-col>
+                            <v-col cols="12" md="6">
+                              <v-text-field
+                                v-model="child.guardianEmail"
+                                label="Email address of nominated guardian *"
+                                :rules="[requiredRule, emailRule]"
+                                type="email"
+                                required
+                              />
+                            </v-col>
+                          </v-row>
+                          <v-row>
+                            <v-col cols="12" md="6">
+                              <v-checkbox
+                                v-model="child.guardianOver25"
+                                label="Guardian at camp is over 25 years old *"
+                                :rules="[guardianOver25Rule]"
+                                true-value="Yes"
+                                false-value="No"
+                                required
+                              />
+                            </v-col>
+                            <v-col cols="12" md="6">
+                              <v-checkbox
+                                v-model="child.guardianRoomAcknowledged"
+                                label="Guardian will be placed in a room close to the minor *"
+                                :rules="[guardianRoomRule]"
+                                true-value="Yes"
+                                false-value="No"
+                                required
+                              />
+                            </v-col>
+                          </v-row>
+                          <v-row>
+                            <v-col cols="12" md="6">
+                              <v-checkbox
+                                v-model="child.guardianDeclaration"
+                                label="I have agreed to supervise this child *"
+                                :rules="[requiredRule]"
+                                true-value="Yes"
+                                false-value="No"
+                                required
+                              />
+                            </v-col>
+                            <v-col cols="12" md="6">
+                              <v-checkbox
+                                v-model="child.parentDeclaration"
+                                label="I have agreed to have my child supervised by the above guardian *"
+                                :rules="[requiredRule]"
+                                true-value="Yes"
+                                false-value="No"
+                                required
+                              />
+                            </v-col>
+                          </v-row>
+                        </div>
+                      </v-expand-transition>
+
+                      <v-divider class="my-4" />
+                      <h4>Instrument details</h4>
+                      <v-row>
+                        <v-col cols="12" md="6">
+                          <v-select
+                            v-model="child.preferredInstrument"
+                            :items="instruments"
+                            label="Preferred instrument *"
+                            :rules="[requiredRule]"
+                            required
+                          />
+                        </v-col>
+                        <v-col cols="12" md="6">
+                          <v-select
+                            v-model="child.preferredGroup"
+                            :items="groupPreferences"
+                            label="Preferred instrument group preference *"
+                            :rules="[requiredRule]"
+                            required
+                          />
+                        </v-col>
+                      </v-row>
+                      <v-row v-for="n in 3" :key="n" class="mb-3">
+                        <v-col cols="12" md="6">
+                          <v-text-field
+                            v-model="child[`additionalInstrument${n}`]"
+                            :label="`Additional instrument ${n}`"
+                            clearable
+                          />
+                        </v-col>
+                        <v-col cols="12" md="6">
+                          <v-select
+                            v-model="child[`additionalInstrument${n}Group`]"
+                            :items="additionalGroupPreferences"
+                            :label="`Additional instrument ${n} group preference`"
+                            clearable
+                          />
+                        </v-col>
+                      </v-row>
+
+                      <v-divider class="my-4" />
+                      <h4>Additional information</h4>
+                      <v-row>
+                        <v-col cols="12" md="6">
+                          <v-radio-group
+                            v-model="child.travelByBus"
+                            label="Are you likely to travel by bus? *"
+                            :rules="[requiredRule]"
+                            row
+                          >
+                            <v-radio label="Yes" value="Yes" />
+                            <v-radio label="No" value="No" />
+                          </v-radio-group>
+                        </v-col>
+                        <v-col cols="12" md="6">
+                          <v-radio-group
+                            v-model="child.bringCaravanTent"
+                            label="Do you wish to bring your own caravan or tent? *"
+                            :rules="[requiredRule]"
+                            row
+                          >
+                            <v-radio label="Yes" value="Yes" />
+                            <v-radio label="No" value="No" />
+                          </v-radio-group>
+                        </v-col>
+                      </v-row>
+                      <v-row>
+                        <v-col cols="12">
+                          <v-text-field
+                            v-model="child.specialNeeds"
+                            label="Special dietary / accommodation needs"
+                            clearable
+                          />
+                        </v-col>
+                      </v-row>
+                      <v-row>
+                        <v-col cols="12" md="6">
+                          <v-select
+                            v-model="child.activityInterest"
+                            :items="activityOptions"
+                            label="Activity interest"
+                            clearable
+                          />
+                        </v-col>
+                        <v-col cols="12" md="3">
+                          <v-checkbox
+                            v-model="child.tutor"
+                            label="I am willing to tutor an ensemble"
+                            true-value="Yes"
+                            false-value="No"
+                          />
+                        </v-col>
+                        <v-col cols="12" md="3">
+                          <v-checkbox
+                            v-model="child.playInAlbany"
+                            label="I am willing to play for community groups in Albany"
+                            true-value="Yes"
+                            false-value="No"
+                          />
+                        </v-col>
+                      </v-row>
+                      <v-row>
+                        <v-col cols="12" md="6">
+                          <v-text-field v-model="child.concertoTitle" label="Title of work" clearable />
+                        </v-col>
+                        <v-col cols="12" md="6">
+                          <v-text-field v-model="child.concertoComposer" label="Composer" clearable />
+                        </v-col>
+                      </v-row>
+                      <v-row>
+                        <v-col cols="12" md="6">
+                          <v-text-field
+                            v-model="child.chamberTitle"
+                            label="Chamber music title & composer"
+                            clearable
+                          />
+                        </v-col>
+                        <v-col cols="12" md="6">
+                          <v-text-field
+                            v-model="child.chamberInstruments"
+                            label="Instruments required"
+                            clearable
+                          />
+                        </v-col>
+                      </v-row>
+                    </v-card>
+                  </v-tab-item>
+                </v-tabs-items>
+              </v-card>
+
+              <v-card class="mb-6 pa-6 section-card">
+                <h2>Payment</h2>
+                <v-row>
+                  <v-col cols="12" md="6">
+                    <v-radio-group
+                      v-model="form.payingOwnFees"
+                      label="I am paying my own fees *"
+                      :rules="[requiredRule]"
+                      row
+                    >
+                      <v-radio label="Yes" value="Yes" />
+                      <v-radio label="No" value="No" />
+                    </v-radio-group>
+                  </v-col>
+                  <v-col cols="12" md="6">
+                    <v-text-field
+                      v-model="form.payeeEmail"
+                      label="Payee email address (if no)"
+                      type="email"
+                      :rules="payeeEmailRules"
+                      clearable
+                    />
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col cols="12">
+                    <v-checkbox
+                      v-model="form.offsitePrice"
+                      label="I would like to claim the off-site price type"
+                      true-value="Yes"
+                      false-value="No"
+                    />
+                  </v-col>
+                </v-row>
+              </v-card>
+
+
+              <v-card class="mb-6 pa-6 section-card">
+                <h2>Declaration</h2>
+                <v-row>
+                  <v-col cols="12">
+                    <v-checkbox
+                      v-model="form.declarationAccepted"
+                      label="I have read and understood the declaration *"
+                      :rules="[requiredRule]"
+                      true-value="Yes"
+                      false-value="No"
+                      required
+                    />
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col cols="12">
+                    <v-textarea
+                      v-model="form.partialAttendance"
+                      label="If you will only attend part of the camp, please indicate dates"
+                      rows="3"
+                      clearable
+                    />
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col cols="12">
+                    <v-textarea
+                      v-model="form.additionalInfo"
+                      label="Is there anything else you wish to add?"
+                      rows="3"
+                      clearable
+                    />
+                  </v-col>
+                </v-row>
+              </v-card>
+
+              <v-alert
+                v-if="message"
+                type="success"
+                class="mb-4"
+                density="comfortable"
+              >
+                {{ message }}
+              </v-alert>
+              <v-alert v-if="error" type="error" class="mb-4" density="comfortable">
+                {{ error }}
+              </v-alert>
+
+              <v-row>
+                <v-col cols="12" class="d-flex justify-end">
+                  <v-btn color="primary" type="submit" :loading="submitting">Submit application</v-btn>
+                </v-col>
+              </v-row>
+            </v-form>
+          </v-container>
+        </v-main>
+      </v-app>
+    </div>
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vuetify@3.6.0/dist/vuetify.min.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
