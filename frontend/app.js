@@ -71,14 +71,8 @@ createApp({
             guardianRoomAcknowledged: "No",
             guardianDeclaration: "No",
             parentDeclaration: "No",
-            preferredInstrument: "",
-            preferredGroup: "",
-            additionalInstrument1: "",
-            additionalInstrument1Group: "",
-            additionalInstrument2: "",
-            additionalInstrument2Group: "",
-            additionalInstrument3: "",
-            additionalInstrument3Group: "",
+            selectedInstrumentTab: 0,
+            instruments: [],
             travelByBus: "",
             bringCaravanTent: "",
             specialNeeds: "",
@@ -154,14 +148,8 @@ createApp({
         guardianRoomAcknowledged: "No",
         guardianDeclaration: "No",
         parentDeclaration: "No",
-        preferredInstrument: "",
-        preferredGroup: "",
-        additionalInstrument1: "",
-        additionalInstrument1Group: "",
-        additionalInstrument2: "",
-        additionalInstrument2Group: "",
-        additionalInstrument3: "",
-        additionalInstrument3Group: "",
+        selectedInstrumentTab: 0,
+        instruments: [],
         travelByBus: "",
         bringCaravanTent: "",
         specialNeeds: "",
@@ -174,10 +162,39 @@ createApp({
         chamberInstruments: "",
       };
     },
+    camperLabel(child, index) {
+      const safeName = child?.firstName?.trim();
+      return safeName ? safeName : `Camper ${index + 1}`;
+    },
     addCamper() {
       if (this.form.children.length < 4) {
         this.form.children.push(this.newChild());
         this.selectedCamperTab = this.form.children.length - 1;
+      }
+    },
+    newInstrument() {
+      return {
+        preferredInstrument: "",
+        preferredGroup: "",
+      };
+    },
+    instrumentLabel(instrument, index) {
+      const safeName = instrument?.preferredInstrument?.trim();
+      return safeName ? safeName : `Instrument ${index + 1}`;
+    },
+    addInstrument(child) {
+      if (child.instruments.length < 6) {
+        child.instruments.push(this.newInstrument());
+        child.selectedInstrumentTab = child.instruments.length - 1;
+      }
+    },
+    removeInstrument(child, index) {
+      if (child.instruments.length <= 1) {
+        return;
+      }
+      child.instruments.splice(index, 1);
+      if (child.selectedInstrumentTab >= child.instruments.length) {
+        child.selectedInstrumentTab = child.instruments.length - 1;
       }
     },
     removeCamper(index) {
@@ -202,8 +219,6 @@ createApp({
           "lastName",
           "phone",
           "under18",
-          "preferredInstrument",
-          "preferredGroup",
           "travelByBus",
           "bringCaravanTent",
         ];
@@ -216,6 +231,17 @@ createApp({
         if (this.emailRule(child.email) !== true) {
           this.error = `Please enter a valid email address for Camper ${i + 1}.`;
           return false;
+        }
+        if (!child.instruments || child.instruments.length === 0) {
+          this.error = `Please add at least one instrument for Camper ${i + 1}.`;
+          return false;
+        }
+        for (let j = 0; j < child.instruments.length; j += 1) {
+          const instrument = child.instruments[j];
+          if (!instrument.preferredInstrument || !instrument.preferredGroup) {
+            this.error = `Please complete all instrument details for Instrument ${j + 1} on Camper ${i + 1}.`;
+            return false;
+          }
         }
         if (child.under18 === "Yes") {
           const under18Fields = ["dob", "parentContactName", "parentContactEmail", "parentAttending"];
@@ -355,14 +381,8 @@ createApp({
             guardianRoomAcknowledged: "No",
             guardianDeclaration: "No",
             parentDeclaration: "No",
-            preferredInstrument: "",
-            preferredGroup: "",
-            additionalInstrument1: "",
-            additionalInstrument1Group: "",
-            additionalInstrument2: "",
-            additionalInstrument2Group: "",
-            additionalInstrument3: "",
-            additionalInstrument3Group: "",
+            selectedInstrumentTab: 0,
+            instruments: [],
             travelByBus: "",
             bringCaravanTent: "",
             specialNeeds: "",

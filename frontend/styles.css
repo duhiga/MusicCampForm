@@ -15,6 +15,7 @@ body {
 
 .section-card {
   border-radius: 16px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
 }
 
 .section-note {
@@ -25,6 +26,27 @@ body {
 .child-card {
   background: #ffffff;
   border-radius: 14px;
+  box-shadow: 0 8px 24px rgba(32, 41, 54, 0.08);
+}
+
+.camper-tabs {
+  margin-bottom: 1.5rem;
+}
+
+.camper-tabs .v-tab,
+.nested-tabs .v-tab {
+  min-width: 140px;
+  padding: 0.85rem 1rem;
+  text-transform: none;
+}
+
+.nested-card {
+  background: #fafbff;
+  border-radius: 12px;
+}
+
+.child-card .v-row {
+  gap: 1rem;
 }
 
 .child-title {

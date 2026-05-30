@@ -34,7 +34,7 @@
             <v-form ref="applicationForm" v-model="isFormValid" lazy-validation>
               <v-card class="mb-6 pa-6 section-card">
                 <h2>Your Contact details</h2>
-                <v-row>
+                <v-row class="g-4">
                   <v-col cols="12" md="4">
                     <v-text-field
                       v-model="form.email"
@@ -61,7 +61,7 @@
                     />
                   </v-col>
                 </v-row>
-                <v-row>
+                <v-row class="g-4">
                   <v-col cols="12" md="6">
                     <v-text-field
                       v-model="form.phone"
@@ -88,18 +88,18 @@
                   </v-col>
                 </v-row>
 
-                <v-tabs v-model="selectedCamperTab" show-arrows>
-                  <v-tab v-for="(child, index) in form.children" :key="index">
-                    {{ index === 0 ? 'Camper 1' : `Camper ${index + 1}` }}
+                <v-tabs v-model="selectedCamperTab" show-arrows class="camper-tabs">
+                  <v-tab v-for="(child, index) in form.children" :key="index" :value="index">
+                    {{ camperLabel(child, index) }}
                   </v-tab>
                 </v-tabs>
 
-                <v-tabs-items v-model="selectedCamperTab">
-                  <v-tab-item v-for="(child, index) in form.children" :key="index">
+                <v-tabs-window v-model="selectedCamperTab">
+                  <v-tabs-window-item v-for="(child, index) in form.children" :key="index" :value="index">
                     <v-card flat class="pa-4 child-card">
                       <v-row class="align-center mb-4">
                         <v-col cols="12" md="6">
-                          <h3>{{ index === 0 ? 'Camper 1 details' : `Camper ${index + 1} details` }}</h3>
+                          <h3>{{ camperLabel(child, index) }} details</h3>
                         </v-col>
                         <v-col cols="12" md="6" class="d-flex justify-end">
                           <v-btn text color="error" v-if="index > 0" @click="removeCamper(index)">
@@ -108,7 +108,7 @@
                         </v-col>
                       </v-row>
 
-                      <v-row>
+                      <v-row class="g-4">
                         <v-col cols="12" md="4">
                           <v-text-field
                             v-model="child.email"
@@ -135,7 +135,7 @@
                           />
                         </v-col>
                       </v-row>
-                      <v-row>
+                      <v-row class="g-4">
                         <v-col cols="12" md="6">
                           <v-text-field
                             v-model="child.phone"
@@ -159,9 +159,9 @@
 
                       <v-expand-transition>
                         <div v-if="child.under18 === 'Yes'">
-                          <v-divider class="my-4" />
+
                           <h4>Under-18 details</h4>
-                          <v-row>
+                          <v-row class="g-4">
                             <v-col cols="12" md="4">
                               <v-text-field
                                 v-model="child.dob"
@@ -189,7 +189,7 @@
                               />
                             </v-col>
                           </v-row>
-                          <v-row>
+                          <v-row class="g-4">
                             <v-col cols="12" md="6">
                               <v-radio-group
                                 v-model="child.parentAttending"
@@ -207,7 +207,7 @@
 
                       <v-expand-transition>
                         <div v-if="child.under18 === 'Yes' && child.parentAttending === 'No'">
-                          <v-divider class="my-4" />
+
                           <h4>Nominated guardian</h4>
                           <v-row>
                             <v-col cols="12" md="6">
@@ -228,7 +228,7 @@
                               />
                             </v-col>
                           </v-row>
-                          <v-row>
+                          <v-row class="g-4">
                             <v-col cols="12" md="6">
                               <v-checkbox
                                 v-model="child.guardianOver25"
@@ -275,49 +275,67 @@
                         </div>
                       </v-expand-transition>
 
-                      <v-divider class="my-4" />
+
                       <h4>Instrument details</h4>
-                      <v-row>
-                        <v-col cols="12" md="6">
-                          <v-select
-                            v-model="child.preferredInstrument"
-                            :items="instruments"
-                            label="Preferred instrument *"
-                            :rules="[requiredRule]"
-                            required
-                          />
+                      <v-row class="align-center mb-4">
+                        <v-col cols="12" md="8">
+                          <p class="section-note">
+                            One instrument is shown by default. Add more instruments and use the tabs to switch between them.
+                          </p>
                         </v-col>
-                        <v-col cols="12" md="6">
-                          <v-select
-                            v-model="child.preferredGroup"
-                            :items="groupPreferences"
-                            label="Preferred instrument group preference *"
-                            :rules="[requiredRule]"
-                            required
-                          />
-                        </v-col>
-                      </v-row>
-                      <v-row v-for="n in 3" :key="n" class="mb-3">
-                        <v-col cols="12" md="6">
-                          <v-text-field
-                            v-model="child[`additionalInstrument${n}`]"
-                            :label="`Additional instrument ${n}`"
-                            clearable
-                          />
-                        </v-col>
-                        <v-col cols="12" md="6">
-                          <v-select
-                            v-model="child[`additionalInstrument${n}Group`]"
-                            :items="additionalGroupPreferences"
-                            :label="`Additional instrument ${n} group preference`"
-                            clearable
-                          />
+                        <v-col cols="12" md="4" class="d-flex justify-end">
+                          <v-btn color="primary" @click="addInstrument(child)" :disabled="child.instruments.length >= 6">
+                            Add instrument
+                          </v-btn>
                         </v-col>
                       </v-row>
 
-                      <v-divider class="my-4" />
+                      <v-tabs v-model="child.selectedInstrumentTab" show-arrows class="nested-tabs">
+                        <v-tab v-for="(instrument, instrumentIndex) in child.instruments" :key="instrumentIndex" :value="instrumentIndex">
+                          {{ instrumentLabel(instrument, instrumentIndex) }}
+                        </v-tab>
+                      </v-tabs>
+
+                      <v-tabs-window v-model="child.selectedInstrumentTab">
+                        <v-tabs-window-item
+                          v-for="(instrument, instrumentIndex) in child.instruments"
+                          :key="instrumentIndex"
+                          :value="instrumentIndex"
+                        >
+                          <v-card flat class="pa-4 nested-card">
+                            <v-row class="g-4">
+                              <v-col cols="12" md="6">
+                                <v-select
+                                  v-model="instrument.preferredInstrument"
+                                  :items="instruments"
+                                  label="Instrument *"
+                                  :rules="[requiredRule]"
+                                  required
+                                />
+                              </v-col>
+                              <v-col cols="12" md="6">
+                                <v-select
+                                  v-model="instrument.preferredGroup"
+                                  :items="additionalGroupPreferences"
+                                  label="Group preference *"
+                                  :rules="[requiredRule]"
+                                  required
+                                />
+                              </v-col>
+                            </v-row>
+                            <v-row>
+                              <v-col cols="12" class="d-flex justify-end">
+                                <v-btn text color="error" v-if="child.instruments.length > 1" @click="removeInstrument(child, instrumentIndex)">
+                                  Remove instrument
+                                </v-btn>
+                              </v-col>
+                            </v-row>
+                          </v-card>
+                        </v-tabs-window-item>
+                      </v-tabs-window>
+
                       <h4>Additional information</h4>
-                      <v-row>
+                      <v-row class="g-4">
                         <v-col cols="12" md="6">
                           <v-radio-group
                             v-model="child.travelByBus"
@@ -401,8 +419,8 @@
                         </v-col>
                       </v-row>
                     </v-card>
-                  </v-tab-item>
-                </v-tabs-items>
+                  </v-tabs-window-item>
+                </v-tabs-window>
               </v-card>
 
               <v-card class="mb-6 pa-6 section-card">
