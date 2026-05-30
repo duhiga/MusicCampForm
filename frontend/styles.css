@@ -33,6 +33,17 @@ body {
   margin-bottom: 1.5rem;
 }
 
+.nested-tabs {
+  margin-bottom: 1.5rem;
+}
+
+.nested-tabs .v-tab.primary-instrument-tab {
+  border: 3px solid #ffd700;
+  border-bottom: none;
+  border-radius: 12px 12px 0 0;
+  font-weight: bold;
+}
+
 .camper-tabs .v-tab,
 .nested-tabs .v-tab {
   min-width: 140px;
@@ -47,6 +58,22 @@ body {
 
 .child-card .v-row {
   gap: 1rem;
+}
+
+/* Camper tabs card borders */
+.child-card {
+  border: 2px solid #999999;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(32, 41, 54, 0.08);
+  padding: 1.5rem !important;
+}
+
+/* Instrument tabs card borders */
+.nested-card {
+  border: 2px solid #cccccc;
+  border-radius: 8px;
+  background: #fafbff;
+  padding: 1rem !important;
 }
 
 .child-title {

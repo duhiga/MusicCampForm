@@ -42,7 +42,7 @@
                       :rules="[requiredRule, emailRule]"
                       type="email"
                       required
-                    />
+                    ></v-text-field>
                   </v-col>
                   <v-col cols="12" md="4">
                     <v-text-field
@@ -50,7 +50,7 @@
                       label="First name *"
                       :rules="[requiredRule]"
                       required
-                    />
+                    ></v-text-field>
                   </v-col>
                   <v-col cols="12" md="4">
                     <v-text-field
@@ -58,7 +58,7 @@
                       label="Last name *"
                       :rules="[requiredRule]"
                       required
-                    />
+                    ></v-text-field>
                   </v-col>
                 </v-row>
                 <v-row class="g-4">
@@ -68,7 +68,7 @@
                       label="Contact phone number *"
                       :rules="[requiredRule]"
                       required
-                    />
+                    ></v-text-field>
                   </v-col>
                 </v-row>
               </v-card>
@@ -94,7 +94,7 @@
                   </v-tab>
                 </v-tabs>
 
-                <v-tabs-window v-model="selectedCamperTab">
+                <v-tabs-window v-model="selectedCamperTab" class="camper-tabs-window">
                   <v-tabs-window-item v-for="(child, index) in form.children" :key="index" :value="index">
                     <v-card flat class="pa-4 child-card">
                       <v-row class="align-center mb-4">
@@ -116,7 +116,7 @@
                             :rules="[requiredRule, emailRule]"
                             type="email"
                             required
-                          />
+                          ></v-text-field>
                         </v-col>
                         <v-col cols="12" md="4">
                           <v-text-field
@@ -124,7 +124,7 @@
                             label="Camper first name *"
                             :rules="[requiredRule]"
                             required
-                          />
+                          ></v-text-field>
                         </v-col>
                         <v-col cols="12" md="4">
                           <v-text-field
@@ -132,7 +132,7 @@
                             label="Camper last name *"
                             :rules="[requiredRule]"
                             required
-                          />
+                          ></v-text-field>
                         </v-col>
                       </v-row>
                       <v-row class="g-4">
@@ -142,7 +142,7 @@
                             label="Camper phone number *"
                             :rules="[requiredRule]"
                             required
-                          />
+                          ></v-text-field>
                         </v-col>
                         <v-col cols="12" md="6">
                           <v-radio-group
@@ -151,8 +151,8 @@
                             :rules="[requiredRule]"
                             row
                           >
-                            <v-radio label="Yes" value="Yes" />
-                            <v-radio label="No" value="No" />
+                            <v-radio label="Yes" value="Yes"></v-radio>
+                            <v-radio label="No" value="No"></v-radio>
                           </v-radio-group>
                         </v-col>
                       </v-row>
@@ -169,7 +169,7 @@
                                 :rules="[requiredRule]"
                                 type="date"
                                 required
-                              />
+                              ></v-text-field>
                             </v-col>
                             <v-col cols="12" md="4">
                               <v-text-field
@@ -177,7 +177,7 @@
                                 label="Name of parent contact *"
                                 :rules="[requiredRule]"
                                 required
-                              />
+                              ></v-text-field>
                             </v-col>
                             <v-col cols="12" md="4">
                               <v-text-field
@@ -186,7 +186,7 @@
                                 :rules="[requiredRule, emailRule]"
                                 type="email"
                                 required
-                              />
+                              ></v-text-field>
                             </v-col>
                           </v-row>
                           <v-row class="g-4">
@@ -197,8 +197,8 @@
                                 :rules="[requiredRule]"
                                 row
                               >
-                                <v-radio label="Yes" value="Yes" />
-                                <v-radio label="No" value="No" />
+                                <v-radio label="Yes" value="Yes"></v-radio>
+                                <v-radio label="No" value="No"></v-radio>
                               </v-radio-group>
                             </v-col>
                           </v-row>
@@ -216,7 +216,7 @@
                                 label="Name of nominated guardian *"
                                 :rules="[requiredRule]"
                                 required
-                              />
+                              ></v-text-field>
                             </v-col>
                             <v-col cols="12" md="6">
                               <v-text-field
@@ -225,7 +225,7 @@
                                 :rules="[requiredRule, emailRule]"
                                 type="email"
                                 required
-                              />
+                              ></v-text-field>
                             </v-col>
                           </v-row>
                           <v-row class="g-4">
@@ -237,7 +237,7 @@
                                 true-value="Yes"
                                 false-value="No"
                                 required
-                              />
+                              ></v-checkbox>
                             </v-col>
                             <v-col cols="12" md="6">
                               <v-checkbox
@@ -247,7 +247,7 @@
                                 true-value="Yes"
                                 false-value="No"
                                 required
-                              />
+                              ></v-checkbox>
                             </v-col>
                           </v-row>
                           <v-row>
@@ -259,7 +259,7 @@
                                 true-value="Yes"
                                 false-value="No"
                                 required
-                              />
+                              ></v-checkbox>
                             </v-col>
                             <v-col cols="12" md="6">
                               <v-checkbox
@@ -269,7 +269,7 @@
                                 true-value="Yes"
                                 false-value="No"
                                 required
-                              />
+                              ></v-checkbox>
                             </v-col>
                           </v-row>
                         </div>
@@ -291,12 +291,12 @@
                       </v-row>
 
                       <v-tabs v-model="child.selectedInstrumentTab" show-arrows class="nested-tabs">
-                        <v-tab v-for="(instrument, instrumentIndex) in child.instruments" :key="instrumentIndex" :value="instrumentIndex">
+                        <v-tab v-for="(instrument, instrumentIndex) in child.instruments" :key="instrumentIndex" :value="instrumentIndex" :class="{ 'primary-instrument-tab': instrument.isPrimary }">
                           {{ instrumentLabel(instrument, instrumentIndex) }}
                         </v-tab>
                       </v-tabs>
 
-                      <v-tabs-window v-model="child.selectedInstrumentTab">
+                      <v-tabs-window v-model="child.selectedInstrumentTab" class="instrument-tabs-window">
                         <v-tabs-window-item
                           v-for="(instrument, instrumentIndex) in child.instruments"
                           :key="instrumentIndex"
@@ -307,11 +307,11 @@
                               <v-col cols="12" md="6">
                                 <v-select
                                   v-model="instrument.preferredInstrument"
-                                  :items="instruments"
+                                  :items="getAvailableInstruments(child, instrumentIndex)"
                                   label="Instrument *"
                                   :rules="[requiredRule]"
                                   required
-                                />
+                                ></v-select>
                               </v-col>
                               <v-col cols="12" md="6">
                                 <v-select
@@ -320,7 +320,16 @@
                                   label="Group preference *"
                                   :rules="[requiredRule]"
                                   required
-                                />
+                                ></v-select>
+                              </v-col>
+                            </v-row>
+                            <v-row class="g-4">
+                              <v-col cols="12" md="6">
+                                <v-checkbox
+                                  :model-value="instrument.isPrimary"
+                                  @update:model-value="(newValue) => { if (!newValue) { return; } setPrimaryInstrument(child, instrumentIndex); }"
+                                  label="Make this my primary instrument"
+                                ></v-checkbox>
                               </v-col>
                             </v-row>
                             <v-row>
@@ -343,8 +352,8 @@
                             :rules="[requiredRule]"
                             row
                           >
-                            <v-radio label="Yes" value="Yes" />
-                            <v-radio label="No" value="No" />
+                            <v-radio label="Yes" value="Yes"></v-radio>
+                            <v-radio label="No" value="No"></v-radio>
                           </v-radio-group>
                         </v-col>
                         <v-col cols="12" md="6">
@@ -354,8 +363,8 @@
                             :rules="[requiredRule]"
                             row
                           >
-                            <v-radio label="Yes" value="Yes" />
-                            <v-radio label="No" value="No" />
+                            <v-radio label="Yes" value="Yes"></v-radio>
+                            <v-radio label="No" value="No"></v-radio>
                           </v-radio-group>
                         </v-col>
                       </v-row>
@@ -365,7 +374,7 @@
                             v-model="child.specialNeeds"
                             label="Special dietary / accommodation needs"
                             clearable
-                          />
+                          ></v-text-field>
                         </v-col>
                       </v-row>
                       <v-row>
@@ -375,7 +384,7 @@
                             :items="activityOptions"
                             label="Activity interest"
                             clearable
-                          />
+                          ></v-select>
                         </v-col>
                         <v-col cols="12" md="3">
                           <v-checkbox
@@ -383,7 +392,7 @@
                             label="I am willing to tutor an ensemble"
                             true-value="Yes"
                             false-value="No"
-                          />
+                          ></v-checkbox>
                         </v-col>
                         <v-col cols="12" md="3">
                           <v-checkbox
@@ -391,15 +400,15 @@
                             label="I am willing to play for community groups in Albany"
                             true-value="Yes"
                             false-value="No"
-                          />
+                          ></v-checkbox>
                         </v-col>
                       </v-row>
                       <v-row>
                         <v-col cols="12" md="6">
-                          <v-text-field v-model="child.concertoTitle" label="Title of work" clearable />
+                          <v-text-field v-model="child.concertoTitle" label="Title of work" clearable ></v-text-field>
                         </v-col>
                         <v-col cols="12" md="6">
-                          <v-text-field v-model="child.concertoComposer" label="Composer" clearable />
+                          <v-text-field v-model="child.concertoComposer" label="Composer" clearable ></v-text-field>
                         </v-col>
                       </v-row>
                       <v-row>
@@ -408,14 +417,14 @@
                             v-model="child.chamberTitle"
                             label="Chamber music title & composer"
                             clearable
-                          />
+                          ></v-text-field>
                         </v-col>
                         <v-col cols="12" md="6">
                           <v-text-field
                             v-model="child.chamberInstruments"
                             label="Instruments required"
                             clearable
-                          />
+                          ></v-text-field>
                         </v-col>
                       </v-row>
                     </v-card>
@@ -433,8 +442,8 @@
                       :rules="[requiredRule]"
                       row
                     >
-                      <v-radio label="Yes" value="Yes" />
-                      <v-radio label="No" value="No" />
+                      <v-radio label="Yes" value="Yes"></v-radio>
+                      <v-radio label="No" value="No"></v-radio>
                     </v-radio-group>
                   </v-col>
                   <v-col cols="12" md="6">
@@ -444,7 +453,7 @@
                       type="email"
                       :rules="payeeEmailRules"
                       clearable
-                    />
+                    ></v-text-field>
                   </v-col>
                 </v-row>
                 <v-row>
@@ -454,7 +463,7 @@
                       label="I would like to claim the off-site price type"
                       true-value="Yes"
                       false-value="No"
-                    />
+                    ></v-checkbox>
                   </v-col>
                 </v-row>
               </v-card>
@@ -471,7 +480,7 @@
                       true-value="Yes"
                       false-value="No"
                       required
-                    />
+                    ></v-checkbox>
                   </v-col>
                 </v-row>
                 <v-row>

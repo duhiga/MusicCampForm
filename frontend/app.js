@@ -172,19 +172,54 @@ createApp({
         this.selectedCamperTab = this.form.children.length - 1;
       }
     },
-    newInstrument() {
+    newInstrument(isPrimary = false) {
       return {
         preferredInstrument: "",
         preferredGroup: "",
+        isPrimary: isPrimary,
       };
     },
     instrumentLabel(instrument, index) {
       const safeName = instrument?.preferredInstrument?.trim();
       return safeName ? safeName : `Instrument ${index + 1}`;
     },
+    getAvailableInstruments(child, currentInstrumentIndex) {
+      // Get all instruments selected in other tabs
+      const selectedInstruments = new Set();
+      for (let i = 0; i < child.instruments.length; i += 1) {
+        // Skip the current instrument tab
+        if (i !== currentInstrumentIndex && child.instruments[i].preferredInstrument) {
+          selectedInstruments.add(child.instruments[i].preferredInstrument);
+        }
+      }
+      // Filter out selected instruments, but keep "None" available
+      return this.instruments.filter(
+        (instrument) => !selectedInstruments.has(instrument)
+      );
+    },
+    setPrimaryInstrument(child, instrumentIndex) {
+      // Get the instrument we're making primary
+      const primaryInstrument = child.instruments[instrumentIndex];
+      primaryInstrument.isPrimary = true;
+      
+      // Build new instruments array with primary at front
+      const otherInstruments = [];
+      for (let i = 0; i < child.instruments.length; i += 1) {
+        if (i !== instrumentIndex) {
+          child.instruments[i].isPrimary = false;
+          otherInstruments.push(child.instruments[i]);
+        }
+      }
+      
+      // Replace instruments array to trigger Vue reactivity
+      child.instruments = [primaryInstrument, ...otherInstruments];
+      child.selectedInstrumentTab = 0;
+    },
     addInstrument(child) {
       if (child.instruments.length < 6) {
-        child.instruments.push(this.newInstrument());
+        // First instrument should be primary by default
+        const isPrimary = child.instruments.length === 0;
+        child.instruments.push(this.newInstrument(isPrimary));
         child.selectedInstrumentTab = child.instruments.length - 1;
       }
     },
